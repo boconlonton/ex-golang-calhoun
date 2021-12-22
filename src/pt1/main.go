@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -11,8 +12,12 @@ func main() {
 	var ans string
 	var scr int
 
-	fn := os.Args[1]
-	f, err := os.Open(fn)
+	// Using `flag` standard library to process the command-line setup
+	csvFilename := flag.String("csv", "problems.csv", "a csv file in the format of `questions,answer`")
+	flag.Parse()
+
+	// Read the CSV file
+	f, err := os.Open(*csvFilename)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -20,6 +25,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Load the questions
 	for i, v := range data {
 		fmt.Printf("Question %d: %s\n", i+1, v[0])
 		_, err := fmt.Scanf("%s\n", &ans)
