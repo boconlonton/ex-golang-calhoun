@@ -6,23 +6,36 @@ import (
 )
 
 func TestWalk(t *testing.T) {
-	var res []int
 	c := make(chan int)
 	go Walk(tree.New(1), c)
 
 	// Assert the result
-	for v := range c {
-		res = append(res, v)
+	tmp1, ok1 := <-c
+	if !ok1 {
+		return
 	}
-	for i, v := range res {
-		if i == 0 {
-			if v > res[i+1] {
-				t.Error()
-			}
-		} else {
-			if v < res[i-1] {
-				t.Error()
-			}
+	for {
+		tmp2, ok2 := <-c
+		if !ok2 {
+			break
 		}
+		if tmp2 < tmp1 {
+			t.Error()
+		}
+	}
+}
+
+func TestSame(t *testing.T) {
+	r := Same(tree.New(1), tree.New(2))
+	if r {
+		t.Error()
+	}
+	r = Same(tree.New(1), tree.New(1))
+	if !r {
+		t.Error()
+	}
+	r = Same(tree.New(2), tree.New(1))
+	if r {
+		t.Error()
 	}
 }
